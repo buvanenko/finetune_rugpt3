@@ -2,7 +2,7 @@ import numpy as np
 import random
 import nltk
 
-data_path = 'D:\\neural_trainer\\essays.txt'
+data_path = 'essays.txt'
 
 with open(data_path, "r", encoding="utf-8") as file:
     text = file.read()
