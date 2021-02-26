@@ -373,6 +373,16 @@ def train(args, train_dataset, model: PreTrainedModel, tokenizer: PreTrainedToke
                     torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
                     torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
                     logger.info("Saving optimizer and scheduler states to %s", output_dir)
+                                        if args.enable_checkpoints_backup:
+                        logger.info("Backing up checkpoint(s)")
+                        if os.path.isdir(args.checkpoint_backups_path):
+                            os.system("tar cvzf backup.tar.gz %s /content/runs" % args.output_dir)
+                            os.system("mv backup.tar.gz %s" % args.checkpoint_backups_path)
+                        elif not os.path.isdir(args.checkpoint_backups_path):
+                            os.makedirs(args.checkpoint_backups_path)
+                            os.system("tar cvzf backup.tar.gz %s /content/runs" % args.output_dir)
+                            os.system("mv backup.tar.gz %s" % args.checkpoint_backups_path)
+                        logger.info("Backed up!")
 
             if 0 < args.max_steps < global_step:
                 epoch_iterator.close()
@@ -545,6 +555,8 @@ def main():
     parser.add_argument(
         "--num_train_epochs", default=1.0, type=float, help="Total number of training epochs to perform."
     )
+    parser.add_argument("--enable_checkpoints_backup", action="store_true", help="Allow checkpoints autobackup")
+    parser.add_argument("--checkpoint_backups_path", default="/content/backups", type=str, help="Settings autobackup path")
     parser.add_argument(
         "--max_steps",
         default=-1,
