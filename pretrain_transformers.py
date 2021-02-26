@@ -373,7 +373,7 @@ def train(args, train_dataset, model: PreTrainedModel, tokenizer: PreTrainedToke
                     torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
                     torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
                     logger.info("Saving optimizer and scheduler states to %s", output_dir)
-                                        if args.enable_checkpoints_backup:
+                    if args.enable_checkpoints_backup:
                         logger.info("Backing up checkpoint(s)")
                         if os.path.isdir(args.checkpoint_backups_path):
                             os.system("tar cvzf backup.tar.gz %s /content/runs" % args.output_dir)
